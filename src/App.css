@@ -31,3 +31,18 @@
     transform: rotate(360deg);
   }
 }
+.card{
+  display: inline-block;
+  border:1px solid #000;
+  height: 100px;
+  width: 100px;
+  margin: 15px;
+  padding: 5px;
+  transition: all 0.2s ease-in-out;
+}
+
+.card:hover{
+  background-color: rgba(0, 0, 0,0.05);
+  cursor: pointer;
+  border-radius: 5px;
+}
