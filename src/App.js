@@ -1,37 +1,8 @@
 import React from "react";
 import "./App.css";
 import _ from "lodash";
-import update from "immutability-helper";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faGem, faSpad } from "@fortawesome/free-solid-svg-icons";
+
 const cards = require("./data/cards.json");
-
-/*
-
-//shuffle
-//distribute 7 cards to each player
-// Get cutter that is not 7
-
-// play player one
-
-// only play with type, text, or Ace match  <FontAwesomeIcon icon="coffee" />
-
-// if play ace select waht next player should play
-
-// pick from deck.
-
-// resuffle played cards to deck if deck is empty
-
-// on play j of 8 add another chance to play again
-
-//on play 7 if total cards of plyer is less than 25. calculate winner with less totla numbe rof cards
-
-// on play 2 next player should pick 2 cards from the deck if the next card is not also a 2
-
-// if playing cards is done player is winner
-
-
-*/
 
 class App extends React.Component {
   constructor(props) {
@@ -57,22 +28,14 @@ class App extends React.Component {
 
   componentDidMount() {
     this._start();
-    // only play with type, text, or Ace match
-
-    // if play ace select waht next player should play
-
-    // pick from deck.
-
-    // resuffle played cards to deck if deck is empty
-
-    // on play j of 8 add another chance to play again
-
-    //on play 7 if total cards of plyer is less than 25. calculate winner with less totla numbe rof cards
-
-    // on play 2 next player should pick 2 cards from the deck if the next card is not also a 2
-
-    // if playing cards is done player is winner
   }
+
+    _start = async () => {
+    console.log("Starting Game");
+    await this._shuffle();
+    await this._distributeCardsEvenly();
+  };
+
   _shuffle = async () => {
     let shuffledCards = cards.sort(() => Math.random() - 0.5);
     console.log("Shuffling");
@@ -81,7 +44,7 @@ class App extends React.Component {
         deck: shuffledCards
       },
       () => {
-        this._distributeCardsEvenly();
+        console.log("Done Shuffling")
       }
     );
   };
@@ -124,6 +87,7 @@ class App extends React.Component {
       gameOver: false
     });
   };
+
   _playNext = async (player, card) => {
     console.log("player", player);
     //check to see if right player should play
@@ -237,6 +201,7 @@ class App extends React.Component {
       return false;
     }
   };
+
   _pickFromDeck = async (player, number =1) => {
     let cardsToAdd =[];
     for (var i = 0; i < number; i++) {
@@ -247,15 +212,14 @@ class App extends React.Component {
     // upddate state not to require pick from cards
 
   };
-  _regroupDeckFromPlayed = async () => {};
-  _cut = async () => {};
-  _start = async () => {
-    console.log("Starting Game");
-    //empty deck, player cards, cutter, played, nextplayer, winner, gameOver
-    this._shuffle();
+  _regroupDeckFromPlayed = async () => {
+
   };
+  _cut = async () => {};
+
   _cancel = async () => {};
   _determineWinner = async () => {};
+
   iconRenderer(name) {
     switch (name) {
       case "Spade":
@@ -270,6 +234,7 @@ class App extends React.Component {
         return <span></span>;
     }
   }
+
 
   render() {
     let playerOneCards =
