@@ -24,6 +24,7 @@ class App extends React.Component {
       gameOver: true,
       winner: "",
       requiredType:"",
+      acePlayed:false,
       cardsToPick:1,
       canPickFromDeck:false,
       mustPickFromDeck:false
@@ -32,6 +33,7 @@ class App extends React.Component {
 
   componentDidMount() {
     this._start();
+
   }
 
     _start = async () => {
@@ -93,6 +95,7 @@ class App extends React.Component {
   };
 
   _handlePlayed = async (player, card, currentPlayedCards, nplayer) => {
+    const thisApp = this;
     switch( card.number ){
       case 20:
       // ask next player to pick 2 cards of play a an equivalent card`
@@ -100,11 +103,15 @@ class App extends React.Component {
           played: currentPlayedCards,
           cardsToPick:2,
           canPickFromDeck:true,
+          acePlayed:false,
+          requiredType:"",
           mustPickFromDeck:true,
           [player.name === "Player One"
           ? "playerOne"
           : "playerTwo"]: nplayer,
           nextPlayer: player.name === "Player One" ? "Player Two" : "Player One"
+      }, function(){
+        thisApp._determineWinner(false);
       });
       break;
 
@@ -114,11 +121,15 @@ class App extends React.Component {
         played: currentPlayedCards,
         cardsToPick:1,
         canPickFromDeck:true,
+        acePlayed:false,
+        requiredType:"",
         mustPickFromDeck:false,
         [player.name === "Player One"
         ? "playerOne"
         : "playerTwo"]: nplayer,
         nextPlayer: player.name === "Player One" ? "Player One" : "Player Two"
+    }, function(){
+      thisApp._determineWinner(false);
     });
     break;
 
@@ -129,10 +140,14 @@ class App extends React.Component {
       cardsToPick:1,
       canPickFromDeck:true,
       mustPickFromDeck:false,
+      acePlayed:false,
+      requiredType:"",
       [player.name === "Player One"
       ? "playerOne"
       : "playerTwo"]: nplayer,
       nextPlayer: player.name === "Player One" ? "Player One" : "Player Two"
+  }, function(){
+    thisApp._determineWinner(false);
   });
   break;
       case 15:
@@ -142,51 +157,64 @@ class App extends React.Component {
         cardsToPick:1,
         canPickFromDeck:true,
         mustPickFromDeck:false,
-        requiredType:this.state.requiredType,
+        acePlayed:true,
         [player.name === "Player One"
         ? "playerOne"
         : "playerTwo"]: nplayer,
-        nextPlayer: player.name === "Player One" ? "Player One" : "Player Two"
+        nextPlayer: player.name === "Player One" ? "Player Two" : "Player One"
+    }, function(){
+      thisApp._determineWinner(false);
     });
     break;
-
-      // case card.number == 7 && card.type == this.state.cutter.type:
-      // // calculate if current player has to number of cards less that 25 in total if so then calculate each player who has the least to be the winner
-      // let totalCount = 0;
-      // this.state[player.name].cards.map((v, k)=>
-      //     totalCount +=v.number
-      // );
-      // if(totalCount <25){
-      //   this.setState({
-      //     played: currentPlayedCards,
-              // cardsToPick:1,
-              // canPickFromDeck:true,
-              // mustPickFromDeck:false,
-      //     requiredType:this.state.requiredType,
-      //      [player.name === "Player One"
-      //      ? "playerOne"
-      //      : "playerTwo"]: nplayer,
-      //     nextPlayer: player.name === "Player One" ? "Player One" : "Player Two"
-      // });
-      // // cut function to run after this
-      // }
-      // else{
-      //   console.log("Total is less than 25");
-      //   return false;
-      // }
-      
       default:
+      if(card.number == 7 && card.type == this.state.cutter.type){
+        let totalCount = 0;
+        this.state[player.name === "Player One"
+        ? "playerOne"
+        : "playerTwo"].cards.map((v, k)=>
+            totalCount +=v.number
+        );
+        if(totalCount <25){
+          this.setState({
+            played: currentPlayedCards,
+            cardsToPick:1,
+            acePlayed:false,
+            canPickFromDeck:true,
+            mustPickFromDeck:false,
+            requiredType:"",
+             [player.name === "Player One"
+             ? "playerOne"
+             : "playerTwo"]: nplayer,
+            nextPlayer: player.name === "Player One" ? "Player One" : "Player Two"
+        },function(){
+          this._determineWinner(true);
+        });
+        // cut function to run after this
+        }
+        else{
+          console.log("Total must be is less than 25");
+          return false;
+        }
+      }
+      else{
         this.setState({
           played: currentPlayedCards,
           cardsToPick:1,
           canPickFromDeck:true,
+          acePlayed:false,
+          requiredType:"",
           mustPickFromDeck:false,
           [player.name === "Player One"
           ? "playerOne"
           : "playerTwo"]: nplayer,
           nextPlayer: player.name === "Player One" ? "Player Two" : "Player One"
+      }, function(){
+        thisApp._determineWinner(false);
       });
+      }
+        
     }
+   
   }
   _afterMath = async(player, card)=>{
     let currentPlayedCards = this.state.played;
@@ -198,8 +226,8 @@ class App extends React.Component {
       console.log("card", card);
       console.log("lastplayed card", lastPlayedCard);
       if (
-        card.text == lastPlayedCard.text ||
-        card.type == lastPlayedCard.type
+        (card.text == lastPlayedCard.text ||
+        card.type == lastPlayedCard.type) && card.text != "A" && lastPlayedCard.text != "A"
       ) {
         console.log("Good to go!");
 
@@ -210,7 +238,27 @@ class App extends React.Component {
             : this.state.playerTwo;
         nplayer.cards = _.difference(player.cards, [card]);
         await this._handlePlayed(player, card, currentPlayedCards, nplayer)
-      } else {
+      } 
+      else if(card.text == "A" || card.number == 15){
+        currentPlayedCards.push(card);
+        let nplayer =
+          player.name === "Player One"
+            ? this.state.playerOne
+            : this.state.playerTwo;
+        nplayer.cards = _.difference(player.cards, [card]);
+        await this._handlePlayed(player, card, currentPlayedCards, nplayer)
+      }
+      else if(lastPlayedCard.text =="A" && card.type == this.state.requiredType){
+        currentPlayedCards.push(card);
+        let nplayer =
+          player.name === "Player One"
+            ? this.state.playerOne
+            : this.state.playerTwo;
+        nplayer.cards = _.difference(player.cards, [card]);
+        await this._handlePlayed(player, card, currentPlayedCards, nplayer)
+      }
+      //also scenario of after A is played
+      else {
         console.log("Not the right card to play");
       }
     } else if (this.state.played.length == 0) {
@@ -227,7 +275,8 @@ class App extends React.Component {
       }
   }
   _playNext = async (player, card) => {
-
+    console.log("player", player);
+    console.log("card", card);
     //check to see if right player should play
     if (player.name === this.state.nextPlayer && this.state.mustPickFromDeck == false) {
       await this._afterMath(player, card);
@@ -284,6 +333,7 @@ class App extends React.Component {
         canPickFromDeck:canPickFromDeck,
         cardsToPick:1,
         deck:whatsLeftOftheDeck,
+        mustPickFromDeck:false,
         [this.state.nextPlayer=== "Player One"
             ? "playerOne"
             : "playerTwo"]: nplayer,
@@ -300,10 +350,67 @@ class App extends React.Component {
   _regroupDeckFromPlayed = async () => {
 
   };
-  _cut = async () => {};
+   _reset = async () => {};
+  _determineWinner(cut){
+    // determine who has 
+    console.log("Checking winner");
+    let playerOne = this.state.playerOne.cards.length;
+    let playerTwo = this.state.playerTwo.cards.length;
 
-  _cancel = async () => {};
-  _determineWinner = async () => {};
+
+    let playerOneCount = 0;
+    let playerTwoCount = 0;
+
+      this.state.playerOne.cards.map((v, k)=>
+      playerOneCount +=v.number
+        );
+      this.state.playerTwo.cards.map((v, k)=>
+      playerTwoCount +=v.number
+          );
+
+    if(cut == true){
+        if(playerOneCount < playerTwoCount){
+            this.setState({
+              gameOver:true,
+              winner:"Player One"
+            });
+        }else if(playerOneCount == playerTwoCount){
+          this.setState({
+            gameOver:true,
+            winner:"Tie"
+          });
+
+        }
+        else if(playerOneCount > playerTwoCount){
+          this.setState({
+            gameOver:true,
+            winner:"Player Two"
+          });
+        }
+        else{
+          console.log("Could not get winner");
+          return false;
+        }
+    }else{
+      // one of the players has to have zero as cards left
+      if(playerOne === 0){
+        this.setState({
+          gameOver:true,
+          winner:"Player One"
+        });
+      }
+      else if(playerTwo === 0){
+        this.setState({
+          gameOver:true,
+          winner:"Player Two"
+        });
+      }
+      else{
+        console.log("Could not get winner");
+        return false;
+      }
+    }
+  };
 
   _promptNextPlayer = async ()=> {
     //when can one prompt the next player
@@ -341,6 +448,7 @@ class App extends React.Component {
 
 
   render() {
+    let cardType = ["Spade", "Flower", "Heart", "Diamond"];
     let playerOneCards =
       this.state.playerOne &&
       this.state.playerOne.cards.map((value, key) => (
@@ -374,10 +482,24 @@ class App extends React.Component {
         </span>
       ));
 
+    let pickRequired = cardType.map((value, key)=>(
+      <button onClick={() => this.setState({requiredType:value})}>{this.iconRenderer(value)}</button>
+    ))
+
     return (
       <div className="App">
         <div className="nextPlayer">{this.state.nextPlayer}</div>
         <div className="controller-sec"><button onClick={() => this._promptNextPlayer()}>Prompt Next Player</button></div>
+         { this.state.acePlayed && 
+          (<div className="pick-type">
+          <h3>Pick card required</h3>
+          {pickRequired}
+          <br/>
+          <hr/>
+          <span>{this.iconRenderer(this.state.requiredType)}</span>
+          </div>)
+         }
+
         <h3>Player One</h3>
         {playerOneCards}
         <hr />

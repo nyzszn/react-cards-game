@@ -67,3 +67,15 @@
 .controller-sec button{
   margin: 5px;
 }
+.pick-type{
+    position: fixed;
+    bottom:0;
+    left:0;
+    background-color: rgba(0,0,0, 0.3);
+    color:#fff;
+    display: block;
+    padding: 5px;
+}
+.pick-type button{
+  margin: 5px;
+}
