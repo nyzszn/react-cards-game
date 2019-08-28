@@ -91,6 +91,7 @@ class App extends React.Component {
       gameOver: false
     });
   };
+
   _handlePlayed = async (player, card, currentPlayedCards, nplayer) => {
     switch( card.number ){
       case 20:
@@ -281,6 +282,7 @@ class App extends React.Component {
       this.setState({
         // cannot pick again until played
         canPickFromDeck:canPickFromDeck,
+        cardsToPick:1,
         deck:whatsLeftOftheDeck,
         [this.state.nextPlayer=== "Player One"
             ? "playerOne"
@@ -302,6 +304,25 @@ class App extends React.Component {
 
   _cancel = async () => {};
   _determineWinner = async () => {};
+
+  _promptNextPlayer = async ()=> {
+    //when can one prompt the next player
+    // If your chances for picking are done
+    if(!this.state.canPickFromDeck && this.state.played.length >0){
+      this.setState({
+        cardsToPick:1,
+        canPickFromDeck:true,
+        mustPickFromDeck:false,
+        nextPlayer: this.state.nextPlayer === "Player One" ? "Player Two" : "Player One"
+    });
+    console.log("Prompted next Player");
+    }
+    else{
+      console.log("Please pick from the deck or play atleast one card");
+      return false;
+    }
+
+  };
 
   iconRenderer(name) {
     switch (name) {
@@ -356,6 +377,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <div className="nextPlayer">{this.state.nextPlayer}</div>
+        <div className="controller-sec"><button onClick={() => this._promptNextPlayer()}>Prompt Next Player</button></div>
         <h3>Player One</h3>
         {playerOneCards}
         <hr />

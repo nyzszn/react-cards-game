@@ -55,3 +55,15 @@
   display: block;
   padding: 5px;
 }
+.controller-sec{
+  position: fixed;
+  top:0;
+  right:0;
+  background-color: rgba(0,0,0, 0.3);
+  color:#fff;
+  display: block;
+  padding: 5px;
+}
+.controller-sec button{
+  margin: 5px;
+}
