@@ -33,7 +33,6 @@ class App extends React.Component {
 
   componentDidMount() {
     this._start();
-
   }
 
     _start = async () => {
@@ -297,10 +296,11 @@ class App extends React.Component {
   };
 
   _pickFromDeck = async () => {
+    if(this.state.deck.length <5 && this.state.played.length >= 2){
+      this._regroupDeckFromPlayed();
+    }
 
     if(this.state.canPickFromDeck){
-
-    
     //must be the right player
     let cardsToPick = this.state.cardsToPick;
     let cardsToAdd =[];
@@ -348,7 +348,19 @@ class App extends React.Component {
 
   };
   _regroupDeckFromPlayed = async () => {
-
+    console.log("Regrouping Deck");
+    let played = this.state.played;
+    let deck = this.state.deck;
+    for (let i = 0; i < played.length-1; i++) {
+        deck.push(played[i]);
+      }
+    //let shuffledCards = cards.sort(() => Math.random() - 0.5);
+     deck = deck.sort(() => Math.random() - 0.5);
+      this.setState({
+        deck:deck,
+        played:[this.state.played[this.state.played.length-1]]
+      });
+    // shuffle and add to deck the shuffle again
   };
    _reset = async () => {};
   _determineWinner(cut){
