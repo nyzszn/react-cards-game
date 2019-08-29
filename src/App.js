@@ -37,6 +37,27 @@ class App extends React.Component {
 
     _start = async () => {
     console.log("Starting Game");
+    this.setState({
+      playerOne: {
+        name: "Player One",
+        cards: []
+      },
+      playerTwo: {
+        name: "Player Two",
+        cards: []
+      },
+      deck: [],
+      cutter: {},
+      played: [],
+      nextPlayer: "",
+      gameOver: true,
+      winner: "",
+      requiredType:"",
+      acePlayed:false,
+      cardsToPick:1,
+      canPickFromDeck:false,
+      mustPickFromDeck:false
+    });
     await this._shuffle();
     await this._distributeCardsEvenly();
   };
@@ -501,7 +522,12 @@ class App extends React.Component {
     return (
       <div className="App">
         <div className="nextPlayer">{this.state.nextPlayer}</div>
-        <div className="controller-sec"><button onClick={() => this._promptNextPlayer()}>Prompt Next Player</button></div>
+        <div className="controller-sec">
+        
+        <button onClick={() => this._promptNextPlayer()}>Prompt Next Player</button>
+        <button onClick={() => this._start()}>Restart</button>
+        
+        </div>
          { this.state.acePlayed && 
           (<div className="pick-type">
           <h3>Pick card required</h3>
