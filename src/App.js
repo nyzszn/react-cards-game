@@ -1,5 +1,5 @@
 import React from "react";
-import "./App.css";
+import "./App.scss";
 import _ from "lodash";
 import { async } from "q";
 
@@ -528,32 +528,36 @@ class App extends React.Component {
         <button onClick={() => this._start()}>Restart</button>
         
         </div>
-         { this.state.acePlayed && 
+        <div className="playerOne">
+        {playerOneCards}
+        </div>
+        <div className="middleSection">
+          <div className="col-md-3">
+          { this.state.acePlayed && 
           (<div className="pick-type">
           <h3>Pick card required</h3>
           {pickRequired}
-          <br/>
           <hr/>
           <span>{this.iconRenderer(this.state.requiredType)}</span>
           </div>)
          }
-
-        <h3>Player One</h3>
-        {playerOneCards}
-        <hr />
-        <div className="played">{played}</div>
-        <hr />
-        <h3>Player Two</h3>
-        {playerTwoCards}
-        <hr />
-        <h3>Deck</h3>
-        <span onClick={() => this._pickFromDeck()} className="card">{this.state.deck.length}</span>
-        <hr />
-        <h3>Cutter</h3>
-        <div className="card">
+         </div>
+          <div className="col-md-6 played">{played}</div>
+          <div className="col-md-3 deck">
+                  <span onClick={() => this._pickFromDeck()} className="stack card">Deck {this.state.deck.length}</span>
+                  <div className="cutter card">
           <span>{this.state.cutter.text}</span>
           {this.iconRenderer(this.state.cutter.type)}
         </div>
+          </div>
+        </div>
+          <div className="playerTwo">
+        {playerTwoCards}
+       </div>
+      
+      
+        
+        
       </div>
     );
   }
