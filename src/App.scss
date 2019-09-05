@@ -1,3 +1,4 @@
+$randomNumber: random(360)-360+deg;
 *{
   box-sizing:border-box;
   margin:0;
@@ -53,6 +54,22 @@ body{
       -webkit-box-shadow: -2px -2px 38px -19px rgba(0,0,0,0.58);
       -moz-box-shadow: -2px -2px 38px -19px rgba(0,0,0,0.58);
       box-shadow: -2px -2px 38px -19px rgba(0,0,0,0.58);
+      .card{
+        position: absolute;
+        left: 100px;
+        top:20px;
+        &:nth-child(even) {
+          -ms-transform: rotate(-45deg); /* IE 9 */
+          -webkit-transform: rotate(-45deg); /* Safari 3-8 */
+          transform: rotate(-45deg);
+        }
+        &:nth-child(odd) {
+          -ms-transform: rotate($randomNumber); /* IE 9 */
+          -webkit-transform: rotate($randomNumber); /* Safari 3-8 */
+          transform: rotate($randomNumber);
+        }
+       
+      }
     }
     .col-md-3{
       width:25%;
