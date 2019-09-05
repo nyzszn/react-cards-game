@@ -458,7 +458,7 @@ class App extends React.Component {
     console.log("Prompted next Player");
     }
     else{
-      console.log("Please pick from the deck or play atleast one card");
+      console.log("Please pick from the deck or play at least one card");
       return false;
     }
 
@@ -535,7 +535,7 @@ class App extends React.Component {
           <div className="col-md-3">
           { this.state.acePlayed && 
           (<div className="pick-type">
-          <h3>Pick card required</h3>
+          <h3>Pick one</h3>
           {pickRequired}
           <hr/>
           <span>{this.iconRenderer(this.state.requiredType)}</span>
